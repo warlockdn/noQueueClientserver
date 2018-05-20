@@ -53,41 +53,54 @@ const updateCustomer = ((req, res, next) => {
 
 const findCustomer = async(req, res, next) => {
 
-    const query = { phone: req.body.phone };
-
+    const query = { phone: parseInt(req.body.phone) };
     logger.info(`Find customer - ${query.phone}`);
 
-    Customer.findOne(query, (err, customer) => {
+    try {
+        let customer = await Customer.findOne(query).exec();
+        if (customer !== null) {
+            return customer;
+        }
+    } catch(err) {
+        logger.error(`Unable to find customer ${req.body.phone}`);
+        return err
+    }
+
+    /* Customer.findOne(query, (err, customer) => {
         if (err) {
             logger.error('Unable to find customer');
             return false;
         } else {
             return true;
         }
-    })
+    }) */
     
 };
 
 const authCustomer = async(req, res, next) => {
 
-    const query = { phone: req.body.phone };
+    const query = { phone: parseInt(req.body.phone) };
     const password = req.body.password;
 
-    Customer.findOne(query, (err, customer) => {
-        if (err) {
-            logger.error('Error finding customer', query);
-            return 'EMPTY';
-        } else {
+    try {
+        let customer = await Customer.findOne(query, 'customerID name phone email password').exec();
 
-            // Validating Password
-            if (!customer.validatePassword(customer.password, password)) {
-                return 'INCORRECT';
-            }
-
+        // Customer not Found
+        if (customer === null) {
+            customer = "ERROR";
             return customer;
-
+        } else { // Customer found but validate Password
+            if (!customer.validatePassword(customer.password, password)) {
+                customer = 'INCORRECT';
+                return customer;
+            }
         }
-    })
+
+        return customer;
+
+    } catch(err) {
+        return err;
+    }
 
 }
 

@@ -28,47 +28,31 @@ const findCustomer = async(req, res, next) => {
 
 };
 
-const authByPhonePass = async(req, res, next) => {
+const authByPhonePass = async (req, res, next) => {
+
+    const response = await customer.authCustomer(req, res, next);
     
-    const result = await customer.authCustomer(req, res, next);
-
-    if (result === 'EMPTY') {
-        
-        logger.error('Customer does not exist ', req.body.phone)
-        
-        return res.status(401).json({
+    if (response === 'ERROR') {
+        res.status(401).json({
             status: 401,
-            message: 'Error finding customer'
-        })
-
-    } else if (result === 'INCORRECT') {
-        
-        const data = {
-            phone: req.body.phone,
-            password: req.body.password
-        };
-
-        logger.error(`Incorrect Credentials ${data}`)
-
-        return res.status(401).json({
+            message: "Customer doesn't exist"
+        });
+    } else if(response === 'INCORRECT') {
+        res.status(401).json({
             status: 401,
-            message: 'Password Incorrect'
+            message: "Incorrect credentials"
         })
-
     } else {
-        
-        const customer = result;
-        logger.info(`Customer exists - ${customer}`);
-        
-        return res.status(200).json({
+        res.status(200).json({
             status: 200,
-            details: {
-                name: customer.name,
-                email: customer.email,
-                phone: customer.phone
+            message: "Success",
+            customer: {
+                id: response.customerID,
+                name: response.name,
+                email: response.email,
+                phone: response.phone
             }
         });
-
     }
  
 };
