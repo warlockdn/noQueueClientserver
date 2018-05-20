@@ -17,32 +17,23 @@ const createCustomer = async(req, res, next) => {
         password: req.body.password
     };
     
-    logger.log('Creating New Customer', payload);
+    logger.info('Creating New Customer', payload);
 
     const customer = new Customer(payload);
-    
-    customer.save().then((customer) => {
 
-        logger.info('New customer created.', customer.name);
-        
-        // Notify Customer
-        sms.welcomeCustomer(customer.phone, customer.name);
-
-        return res.status(200).json({
-            status: 200,
-            details: {
-                name: customer.name,
-                email: customer.email,
-                phone: customer.phone
-            }
-        })
-    }).catch((err) => {
-        logger.error('Error creating customer', err);
-        return res.status(500).json({
-            status: 500,
-            message: 'Error creating customer'
-        })
-    })
+    try {
+        const newCustomer = await customer.save();
+        if (newCustomer.isActive) {
+            logger.info('New customer created.', customer.name);
+            // Notify Customer
+            sms.welcomeCustomer(customer.phone, customer.name);
+            return newCustomer;
+        } else {
+            throw new Error(err)
+        }
+    } catch(err) {
+        return err;
+    }
 
 };
 
@@ -51,9 +42,9 @@ const updateCustomer = ((req, res, next) => {
 });
 
 
-const findCustomer = async(req, res, next) => {
+const findCustomer = async(phone) => {
 
-    const query = { phone: parseInt(req.body.phone) };
+    const query = { phone: parseInt(phone) };
     logger.info(`Find customer - ${query.phone}`);
 
     try {
@@ -62,18 +53,9 @@ const findCustomer = async(req, res, next) => {
             return customer;
         }
     } catch(err) {
-        logger.error(`Unable to find customer ${req.body.phone}`);
+        logger.error(`Unable to find customer ${phone}`);
         return err
     }
-
-    /* Customer.findOne(query, (err, customer) => {
-        if (err) {
-            logger.error('Unable to find customer');
-            return false;
-        } else {
-            return true;
-        }
-    }) */
     
 };
 
@@ -101,6 +83,10 @@ const authCustomer = async(req, res, next) => {
     } catch(err) {
         return err;
     }
+
+}
+
+const authCustomerByOTP = async(req, res, next) => {
 
 }
 
