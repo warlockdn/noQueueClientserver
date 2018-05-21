@@ -10,7 +10,7 @@ const customerSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, unique: true, required: true, trim: true, lowercase: true, },
     phone: { type: Number, index: true, unique: true, required: true },
-    password: String,
+    password: String,   
     createdOn: { type: Date, default: Date.now },
     updatedOn: { type: Date, default: Date.now },
     totalSpent: { type: Number, default: 0 },
