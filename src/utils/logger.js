@@ -12,7 +12,8 @@ const logger = new(winston.createLogger)({
             prettyPrint: true,
             colorize: true,
             silent: false,
-            timestamp: true
+            timestamp: true,
+            json: false
         }),
         new(winston.transports.Console)({
             filename: 'logs/log-%DATE%.log',
@@ -23,7 +24,8 @@ const logger = new(winston.createLogger)({
             prettyPrint: true,
             colorize: true,
             silent: false,
-            timestamp: false
+            timestamp: false,
+            json: false
         })
     ]
 });
