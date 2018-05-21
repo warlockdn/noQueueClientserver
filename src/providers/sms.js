@@ -1,18 +1,43 @@
 const logger = require('../utils/logger');
 const request = require('request');
 
-const sendOTP = async(phoneNumber) => {
+const sendOTP = (phoneNumber) => {
     
-    let param = {
-            authkey: process.env.SMS_AUTH_KEY,
-            message: `Your verification code is ##OTP##`,
-            sender: process.env.SMS_SENDER_REG,
-            mobile: '91' + phoneNumber
-    }   
-    
-    request.post({url: process.env.SMS_HOST, form: param}, function(err, response, body) {
+    const param = {
+        authkey: process.env.SMS_AUTH_KEY,
+        message: `Your verification code is ##OTP##`,
+        sender: process.env.SMS_SENDER_REG,
+        mobile: '91' + phoneNumber,
+        otp_expiry: 5
+    }
+
+    request.post({url: process.env.SMS_OTP, form: param}, (err, response, body) => {
         logger.info('Message sent successfully to ', phoneNumber)
+        console.log(response)
+        console.log(body)
     })
+
+}
+
+const verifyOTP = (phone, otp) => {
+    
+    const param = {
+        authkey: process.env.SMS_AUTH_KEY,
+        mobile: '91' + phone,
+        otp: otp
+    }
+
+    return new Promise((resolve, reject) => {
+        request.post({url: process.env.OTP_VERIFY, form: param}, (err, response, body) => {
+            const result = JSON.parse(response.body);            
+            if (result.type === 'success') {
+                resolve(result);
+            } else {
+                reject(result);
+            }
+        })
+    })
+
 
 }
 
@@ -33,4 +58,4 @@ const welcomeCustomer = async(phoneNumber, name) => {
 
 }
 
-module.exports = { sendOTP, welcomeCustomer }
+module.exports = { sendOTP, welcomeCustomer, verifyOTP }
