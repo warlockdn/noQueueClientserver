@@ -8,6 +8,9 @@ router.route('/findCustomer')
 router.route('/login')
     .post(auth.authByPhonePass);
 
+router.route('/sendotp')
+    .post(auth.sendOTP)
+
 router.route('/loginByOtp')
     .post(auth.authByOTP);
 

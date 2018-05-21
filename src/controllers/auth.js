@@ -1,5 +1,5 @@
 const logger = require('../utils/logger');
-const customer = require('../controllers/customer');
+const customer = require('../helper/customer');
 const sms = require('../providers/sms');
 const jwtProvider = require('../providers/token-generator');
 
