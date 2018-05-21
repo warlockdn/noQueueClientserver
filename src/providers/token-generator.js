@@ -10,13 +10,13 @@ const generator = (payload) => {
 
     const options = {
         algorithm: 'RS256',
-        expiresIn: "1d",
-        audience: 'clientApp',
+        expiresIn: "1w",
+        audience: 'clientServer',
         issuer: 'cserver',
         noTimestamp: false,
         jwtid: (Date.now()).toString()
     }
-
+    
     return new Promise((resolve, reject) => {
         jwt.sign(payload, private_cert, options, (err, token) => {
             if (err) return reject()
