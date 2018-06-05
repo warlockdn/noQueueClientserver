@@ -11,10 +11,10 @@ const key = process.env.PASSWORD_KEY;
 const createCustomer = async(req, res, next) => {
     
     const payload = {
-        name: req.body.name,
-        phone: req.body.phone,
-        email: req.body.email || null,
-        password: req.body.password
+        name: req.body.user.name,
+        phone: req.body.user.phone,
+        email: req.body.user.email || null,
+        password: req.body.user.password
     };
     
     logger.info('Creating New Customer', payload);
