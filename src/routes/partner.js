@@ -5,5 +5,8 @@ const partner = require('../controllers/partner');
 router.route('/listPlaces')
     .get(partner.listPlacesByLongLat);
 
+router.route('/menu/:partnerID')
+    .get(partner.getPlaceMenu);
+
 
 module.exports = router;

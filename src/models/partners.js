@@ -5,6 +5,35 @@ const { autoIncrement } = require('mongoose-plugin-autoinc')
 // Initialize Auto Increment 
 const connection = mongoose.createConnection("mongodb://localhost:27017/food");
 
+const subCollectionSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    type: { type: String, default: 'subcategory' },
+    items: [{
+        id: { type: Number, required: true }
+    }]
+}, {
+    toObject: {
+        transform: function (doc, ret) {
+            delete ret._id;
+        }
+    }
+})
+
+const collectionSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    type: { type: String, default: 'category' }, // Recommended, Popular & Category
+    items: [{
+        id: { type: Number }
+    }],
+    subcollection: [ subCollectionSchema ]
+}, {
+    toObject: {
+        transform: function (doc, ret) {
+            delete ret._id;
+        }
+    }
+});
+
 const partnerSchema = new mongoose.Schema({
     partnerID: { type: Number, index: true, unique: true },
     name: { type: String, required: true },
@@ -19,10 +48,11 @@ const partnerSchema = new mongoose.Schema({
         pincode: { type: String, required: true },
         state: { type: String, required: true } 
     },
-    menu: [],
+    menu: [ collectionSchema ],
     location: {
         coordinates: {
             type: [Number],
+            index: '2d',
             required: true
         },
         elevation: Number
@@ -59,6 +89,13 @@ const partnerSchema = new mongoose.Schema({
     },
     commission: { type: Number, default: 8 },
     documents: []
+}, {
+    toObject: {
+        transform: function (doc, ret) {
+            delete ret._id;
+            delete ret.password;
+        }
+    }
 });
 
 partnerSchema.index({

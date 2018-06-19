@@ -28,7 +28,7 @@ const listPlacesByLongLat = async(req, res, next) => {
             services: services,
             cuisines: cuisines,
             places: places
-        })
+        });
         
     } catch(err) {
         
@@ -44,9 +44,47 @@ const listPlacesByLongLat = async(req, res, next) => {
 };
 
 const getPlaceMenu = async(req, res, next) => {
-    
+    const partnerID = parseInt(req.params.partnerID);
+
+    try {
+
+        if (!partnerID) {
+            throw new Error('err');;
+        }
+
+        const items = await partner.getPlaceMenu(partnerID);
+        const collection = await partner.getCollection(partnerID);
+
+        // Menu not found
+        if (items === "ERROR" || collection === "ERROR") {
+            throw new Error('err');
+        }
+
+        // Converting the array of items to Object. 
+        let modItems = {};
+        items.forEach(item => {
+            modItems[item.id] = item;
+        });
+
+        logger.info(`Returning Menu & Collections \n${items} \n${collection}`);
+
+        return res.status(200).json({
+            status: 200,
+            items: modItems,
+            collection: collection.menu
+        });
+
+    } catch(err) {
+
+        logger.info(`Error finding menu: ${partnerID}`);
+        return res.status(200).json({
+            status: 200,
+            message: process.env.MENU_NOT_FOUND
+        })
+    }
 }
 
 module.exports = {
-    listPlacesByLongLat
+    listPlacesByLongLat,
+    getPlaceMenu
 }
