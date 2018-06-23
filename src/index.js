@@ -1,3 +1,4 @@
+require("babel-polyfill");
 const express = require('express');
 const bodyParser = require('body-parser');
 const parseurl = require('parseurl');
@@ -8,6 +9,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require('./routes/routes');
 const logger = require('./utils/logger');
+
+const firebase = require('./providers/firebase');
 
 // Must configure Raven before doing anything else with it
 Raven.config(process.env.SENTRY_CODE, { sendTimeout: 5 }).install();

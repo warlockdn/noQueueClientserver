@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const Partner = require('../models/partners');
+const Catalog = require('../models/catalog');
 
 const listNearyByPlaces = async(long, lat) => {
 
@@ -20,7 +21,7 @@ const listNearyByPlaces = async(long, lat) => {
             isActive: true,
             isPending: false
             // , 
-        }, 'partnerID name phone imageid basic location characteristics').exec();
+        }, 'partnerID name phone imageid basic commission location characteristics').exec();
 
         if (results !== null) {
             return results;
@@ -39,12 +40,37 @@ const getPlaceMenu = async(partnerID) => {
 
     try {
 
-        const partner = Partner.find(query, 'menu').exec();
+        const menu = await Catalog.find(query).exec();
+
+        if (!menu) {
+            throw new Error("ERROR");
+        } else {
+            return menu
+        }
 
     } catch(err) {
-
+        return "ERROR";
     }
 
+}
+
+const getCollection = async(partnerID) => {
+    
+    const query = { partnerID: partnerID };
+
+    try {
+
+        const collection = await Partner.findOne(query, 'menu').exec();
+
+        if (!collection) {
+            throw new Error('ERROR');
+        } else {
+            return collection;
+        }
+
+    } catch(err) {
+        return "ERROR";
+    }
 }
 
 const filterCuisines = async(list) => {
@@ -131,5 +157,7 @@ module.exports = {
     listNearyByPlaces,
     filterCuisines,
     filterServices,
-    filterType
+    filterType,
+    getPlaceMenu,
+    getCollection
 }

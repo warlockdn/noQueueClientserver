@@ -5,7 +5,7 @@ const jwtProvider = require('../providers/token-generator');
 
 const findCustomer = async(req, res, next) => {
 
-    const status = await customer.findCustomer(req, res, next);
+    const status = await customer.findCustomer(req.body.phone);
 
     if (status) {
         

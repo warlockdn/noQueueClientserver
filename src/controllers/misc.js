@@ -1,0 +1,1 @@
+const jwtProvider = require('../middleware/jwt');

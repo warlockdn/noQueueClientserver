@@ -29,7 +29,7 @@ const createCustomer = async(req, res, next) => {
             sms.welcomeCustomer(customer.phone, customer.name);
             return newCustomer;
         } else {
-            throw new Error(err)
+            throw new Error(newCustomer)
         }
     } catch(err) {
         return err;
