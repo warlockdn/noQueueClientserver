@@ -3,7 +3,7 @@ const mongoose = require('mongoose').set('debug', true);
 const { autoIncrement } = require('mongoose-plugin-autoinc')
 
 // Initialize Auto Increment 
-const connection = mongoose.createConnection("mongodb://localhost:27017/food");
+const connection = mongoose.createConnection(process.env.MONGO_CONNECT_URL);
 
 const subCollectionSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -98,8 +98,31 @@ const partnerSchema = new mongoose.Schema({
     }
 });
 
-partnerSchema.index({
-    location: "2dsphere"
+partnerSchema.methods.validatePassword = (password, receivedPassword) => {
+    const key = process.env.PARTNER_PASSWORD_KEY;
+    let decipher = crypto.createDecipher('aes256', key);
+    let decrypted = decipher.update(password, 'hex', 'utf-8');
+    decrypted += decipher.final('utf-8');
+
+    if (decrypted === receivedPassword) return true;
+    return false;
+}
+
+partnerSchema.pre('update', function (next, done) {
+    this.updatedOn = Date.now();
+    next();
+});
+
+partnerSchema.pre('save', function (next, done) {
+    this.createdOn = Date.now();
+    next();
+});
+
+partnerSchema.plugin(autoIncrement, {
+    model: 'Partner',
+    field: 'partnerID',
+    startAt: 100300,
+    incrementBy: 3
 });
 
 const Partner = connection.model('Partner', partnerSchema);

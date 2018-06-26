@@ -35,6 +35,41 @@ const createOrderFirebase = async(order) => {
 
 }
 
+const updateOrderStatusFirebase = async(docID, orderID, status) => {
+
+    try {
+
+        let ref = db.collection("orders");
+
+        let updatedStatus = {};
+
+        if (status === "ACCEPTED") {
+            updatedStatus["stage"].accepted = true;
+        } else if (status === "DECLINED") {
+            updatedStatus["stage"].declined = true;
+        } else if (status === "READY") {
+            updatedStatus["stage"].ready = true;
+        } else {
+            updatedStatus["stage"].delivered = true;
+        }
+
+        try {
+
+            let status = await ref.doc(docID).set(updatedStatus);
+
+            return status;
+
+        } catch(err) {
+            return "ERROR";
+        }
+
+    } catch(err) {
+
+    }
+
+}
+
 module.exports = {
-    createOrderFirebase
+    createOrderFirebase,
+    updateOrderStatusFirebase
 }

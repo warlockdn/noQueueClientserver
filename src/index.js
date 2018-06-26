@@ -8,6 +8,7 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require('./routes/routes');
+const partnerRoutes = require('./routes/partner/routes');
 const logger = require('./utils/logger');
 
 const firebase = require('./providers/firebase');
@@ -31,6 +32,7 @@ app.get('/v1/status', (req, res) => {
 })
 
 app.use('/v1', routes);
+app.use('/p1', partnerRoutes);
 
 // Error Reporting
 app.use(Raven.requestHandler());
