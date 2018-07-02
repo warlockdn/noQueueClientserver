@@ -17,6 +17,8 @@ const createOrderFirebase = async(order) => {
     try {
 
         order = JSON.parse(JSON.stringify(order));
+        order.updatedOn = new Date(order.updatedOn);
+        order.createdOn = new Date(order.createdOn);
 
         let newOrder = await ref.add(order);
         
@@ -37,34 +39,66 @@ const createOrderFirebase = async(order) => {
 
 const updateOrderStatusFirebase = async(docID, orderID, status) => {
 
+    let updatedStatus = {
+        stage: {
+            placed: true,
+            accepted: false,
+            declined: false,
+            ready: false
+        }
+    };
+
+    if (status === "ACCEPTED") {
+        updatedStatus = {
+            stage: {
+                placed: true,
+                accepted: true,
+                declined: false,
+                ready: false
+            }
+        };
+    } else if (status === "DECLINED") {
+        updatedStatus = {
+            stage: {
+                placed: true,
+                accepted: false,
+                declined: true,
+                ready: false,
+                delivered: false
+            }
+        };
+    } else if (status === "READY") {
+        updatedStatus = {
+            stage: {
+                placed: true,
+                accepted: true,
+                declined: false,
+                ready: true,
+                delivered: false
+            }
+        };
+    } else {
+        updatedStatus = {
+            stage: {
+                placed: true,
+                accepted: true,
+                declined: false,
+                ready: true,
+                delivered: true
+            }
+        };
+    }
+
     try {
 
         let ref = db.collection("orders");
 
-        let updatedStatus = {};
+        let status = await ref.doc(docID).update(updatedStatus);
 
-        if (status === "ACCEPTED") {
-            updatedStatus["stage"].accepted = true;
-        } else if (status === "DECLINED") {
-            updatedStatus["stage"].declined = true;
-        } else if (status === "READY") {
-            updatedStatus["stage"].ready = true;
-        } else {
-            updatedStatus["stage"].delivered = true;
-        }
-
-        try {
-
-            let status = await ref.doc(docID).set(updatedStatus);
-
-            return status;
-
-        } catch(err) {
-            return "ERROR";
-        }
+        return status;
 
     } catch(err) {
-
+        return "ERROR";
     }
 
 }

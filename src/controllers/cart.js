@@ -101,7 +101,8 @@ const notifyCartStatus = async(req, res, next) => {
                 placed: true,
                 accepted: false,
                 ready: false,
-                delivered: false
+                delivered: false,
+                declined: false
             };
 
             const newOrder = await firebase.createOrderFirebase(order);
