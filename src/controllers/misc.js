@@ -4,7 +4,7 @@ const Cart = require('../models/cartModel');
 
 const getOrderList = async(req, res, next) => {
 
-    const customerID = req.body.customerID;
+    const customerID = req.body.customer.id;
 
     try {
 
@@ -12,7 +12,9 @@ const getOrderList = async(req, res, next) => {
             throw new Error("Customer Id not valid", customerID);
         }
         
-        const orders = await Cart.find({ customerID: customerID }, { id, partnerID, cart, createdOn, updatedOn, totalItems, total, status }).exec();
+        const orders = await Cart.find({ customerID: customerID }, 'id partnerID partnerName cart createdOn updatedOn totalItems total status').sort({
+            createdOn: -1
+        }).exec()
     
         if (!orders) {
             throw new Error(orders);

@@ -19,6 +19,7 @@ const cartItemSchema = new Schema({
 const cartSchema = new Schema({
     id: { type: Number, unique: true, required: true },
     partnerID: { type: Number, index: true, required: true },
+    partnerName: { type: String },
     customerID: { type: Number },
     cart: [ cartItemSchema ],
     createdOn: { type: Date, default: Date.now() },

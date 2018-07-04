@@ -11,8 +11,8 @@ const customerSchema = new mongoose.Schema({
     email: { type: String, unique: true, required: true, trim: true, lowercase: true, },
     phone: { type: Number, index: true, unique: true, required: true },
     password: String,   
-    createdOn: { type: Date, default: Date.now },
-    updatedOn: { type: Date, default: Date.now },
+    createdOn: { type: Date, default: Date.now() },
+    updatedOn: { type: Date, default: Date.now() },
     totalSpent: { type: Number, default: 0 },
     totalCommission: { type: Number, default: 0 },
     isActive: {

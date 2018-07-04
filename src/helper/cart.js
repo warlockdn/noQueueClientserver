@@ -2,7 +2,7 @@ const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const Cart = require('../models/cartModel');
 
-const manageCart = async(cartData, customerID, partnerID, notes) => {
+const manageCart = async(cartData, customerID, partnerID, notes, partnerName) => {
 
     try {
 
@@ -12,7 +12,8 @@ const manageCart = async(cartData, customerID, partnerID, notes) => {
             cart: cartData.cart,
             totalItems: cartData.totalItems,
             total: cartData.total,
-            notes: notes
+            notes: notes,
+            partnerName: partnerName
         }
     
         // Verify and modify cart totalItems, Price and Total.

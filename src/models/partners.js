@@ -77,8 +77,8 @@ const partnerSchema = new mongoose.Schema({
         branch: { type: String, required: true },
         ifsc: { type: String, required: true },
     },
-    createdOn: { type: Date, default: Date.now },
-    updatedOn: { type: Date, default: Date.now },
+    createdOn: { type: Date, default: Date.now() },
+    updatedOn: { type: Date, default: Date.now() },
     isActive: {
         type: Boolean,
         default: false

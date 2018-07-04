@@ -12,6 +12,7 @@ const manageCart = async(req, res, next) => {
         const customerID = req.body.customerID || null;
         const cartData = req.body.cart;
         const notes = req.body.notes || null;
+        const partner = req.body.partner || null;
 
         if (!cartData.partnerID) {
             throw new Error('Partner ID missing');
@@ -21,7 +22,7 @@ const manageCart = async(req, res, next) => {
             throw new Error('Error finding Customer ID');
         }
     
-        const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes);
+        const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner);
 
         if (newCart === "ERROR" || newCart === "DUPLICATE") {
             throw new Error("ERROR")
@@ -81,7 +82,7 @@ const manageCart = async(req, res, next) => {
 const notifyCartStatus = async(req, res, next) => {
 
     const orderID = req.body.orderID;
-    const status = req.body.status;
+    const status = req.body.status || "PAID";
 
     try {
 
