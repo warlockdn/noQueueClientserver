@@ -1,9 +1,9 @@
 const winston = require('winston');
-require('winston-daily-rotate-file');
+const dailyRotate = require('winston-daily-rotate-file');
 
-const logger = new(winston.createLogger)({
+const logger = winston.createLogger({
     transports: [
-        new(winston.transports.DailyRotateFile)({
+        new dailyRotate({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
             zippedArchive: true,
@@ -15,7 +15,7 @@ const logger = new(winston.createLogger)({
             timestamp: true,
             json: false
         }),
-        new(winston.transports.Console)({
+        new transports.Console({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
             zippedArchive: true,
