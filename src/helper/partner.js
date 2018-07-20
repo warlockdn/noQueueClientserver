@@ -11,7 +11,7 @@ const listNearyByPlaces = async(long, lat) => {
         const results = await Partner.find({
             location: {
                 $near: {
-                    $maxDistance: 500, // Meteres..
+                    $maxDistance: 700, // Meteres..
                     $geometry: {
                         type: "Point",
                         coordinates: coordinates
@@ -22,6 +22,17 @@ const listNearyByPlaces = async(long, lat) => {
             isPending: false
             // , 
         }, 'partnerID name phone imageid basic commission location characteristics').exec();
+
+        /* const results = await Partner.aggregate.near({
+            near: coordinates,
+            distanceField: 'dist.calculated',
+            maxDistance: 500,
+            query: {
+                isActive: true,
+                isPending: false
+            },
+
+        }) */
 
         if (results !== null) {
             return results;

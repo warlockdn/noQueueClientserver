@@ -32,7 +32,7 @@ const updateOrderStatus = async(req, res, next) => {
 
     } catch(err) {
 
-        logger.info("Error updating order");
+        logger.log("Error updating order");
 
         return res.status(500).json({
             status: 500,
