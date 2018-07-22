@@ -41,6 +41,7 @@ const partnerSchema = new mongoose.Schema({
     phone: { type: Number, index: true, unique: true, required: true },
     password: String,
     imageid: String,
+    partnerbg: String,
     phoneAlternate: { type: String },
     basic: {
         address: { type: String, required: true },
