@@ -17,8 +17,8 @@ const createOrderFirebase = async(order) => {
     try {
 
         order = JSON.parse(JSON.stringify(order));
-        order.updatedOn = new Date(order.updatedOn);
-        order.createdOn = new Date(order.createdOn);
+        order.updatedOn = new Date();
+        order.createdOn = new Date();
 
         return new Promise((resolve, reject) => {
             ref.add(order).then((order) => {
@@ -98,6 +98,8 @@ const updateOrderStatusFirebase = async(docID, orderID, status) => {
             }
         };
     }
+
+    updatedStatus.updatedOn = new Date();
 
     try {
 
