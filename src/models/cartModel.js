@@ -26,6 +26,7 @@ const cartSchema = new Schema({
     updatedOn: { type: Date, default: Date.now() },
     totalItems: { type: Number, required: true },
     total:  { type: Number, required: true },
+    tax: { type: Number, default: 0 },
     commission: { type: Number },
     notes: { type: String },
     status: { type: String }, // In Cart (default), Paid, Accepted, Delivered

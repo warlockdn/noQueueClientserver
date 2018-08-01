@@ -8,5 +8,8 @@ router.route('/manage')
 router.route("/notify")
     .post(cart.notifyCartStatus);
 
+router.route("/capture")
+    .post(cart.verifyOrderPayment);
+
 
 module.exports = router;

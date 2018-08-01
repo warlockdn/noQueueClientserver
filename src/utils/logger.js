@@ -6,22 +6,26 @@ const logger = winston.createLogger({
         new dailyRotate({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
-            zippedArchive: true,
-            maxSize: '20m',
+            // zippedArchive: true,
+            maxSize: '50m',
             maxFiles: '14d',
-            prettyPrint: true,
+            prettyPrint: (object) => {
+                return JSON.stringify(object);
+            },
             colorize: true,
             silent: false,
             timestamp: true,
             json: false
         }),
-        new transports.Console({
+        new winston.transports.Console({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
-            zippedArchive: true,
-            maxSize: '20m',
+            // zippedArchive: true,
+            maxSize: '50m',
             maxFiles: '14d',
-            prettyPrint: true,
+            prettyPrint: (object) => {
+                return JSON.stringify(object);
+            },
             colorize: true,
             silent: false,
             timestamp: false,

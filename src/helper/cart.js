@@ -13,7 +13,11 @@ const manageCart = async(cartData, customerID, partnerID, notes, partnerName) =>
             totalItems: cartData.totalItems,
             total: cartData.total,
             notes: notes,
-            partnerName: partnerName
+            partnerName: partnerName,
+        }
+
+        if (cartData.tax) {
+            payload.tax = cartData.tax;
         }
     
         // Verify and modify cart totalItems, Price and Total.
@@ -44,6 +48,11 @@ const manageCart = async(cartData, customerID, partnerID, notes, partnerName) =>
         if (total !== payload.total || totalItems !== payload.totalItems) {
             throw new Error("Calculation Mismatch");
         } 
+
+        // Add tax if exists
+        if (payload.tax) {
+            total += payload.tax;
+        }
     
         payload.total = total;
         payload.totalItems = totalItems;
@@ -96,7 +105,20 @@ const fetchCart = async(orderID, status) => {
 
 }
 
+const checkPayment = async(orderID, amount) => {
+
+    try {
+
+        
+
+    } catch(err) {
+
+    }
+
+}
+
 module.exports = {
     manageCart,
-    fetchCart
+    fetchCart,
+    checkPayment
 }

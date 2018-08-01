@@ -1,5 +1,6 @@
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
+const helper = require('../utils/helpers');
 const Partner = require('../models/partners');
 const Catalog = require('../models/catalog');
 
@@ -21,7 +22,7 @@ const listNearyByPlaces = async(long, lat) => {
             isActive: true,
             isPending: false
             // , 
-        }, 'partnerID name phone imageid basic commission location characteristics').exec();
+        }, 'partnerID name phone imageid basic commission location characteristics tax taxInfo').exec();
 
         /* const results = await Partner.aggregate.near({
             near: coordinates,
@@ -35,7 +36,15 @@ const listNearyByPlaces = async(long, lat) => {
         }) */
 
         if (results !== null) {
-            return results;
+
+            let newResults = JSON.parse(JSON.stringify(results));
+
+            newResults.forEach(partner => {
+                partner.distance = parseFloat(helper.calculateDistance(lat, long, partner.location.coordinates[1], partner.location.coordinates[0])).toFixed(3)
+            });
+
+            logger.info(newResults);
+            return newResults;
         } else {
             throw new Error('ERROR')
         }

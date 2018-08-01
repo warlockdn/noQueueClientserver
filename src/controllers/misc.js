@@ -12,7 +12,7 @@ const getOrderList = async(req, res, next) => {
             throw new Error("Customer Id not valid", customerID);
         }
         
-        const orders = await Cart.find({ customerID: customerID }, 'id partnerID partnerName cart createdOn updatedOn totalItems total status').sort({
+        const orders = await Cart.find({ customerID: customerID }, 'id partnerID partnerName cart createdOn updatedOn totalItems total tax status').sort({
             createdOn: -1
         }).exec()
     

@@ -12,6 +12,7 @@ const partnerRoutes = require('./routes/partner/routes');
 const logger = require('./utils/logger');
 
 const firebase = require('./providers/firebase');
+const razorPay = require('./providers/razorPay/index');
 
 // Must configure Raven before doing anything else with it
 Raven.config(process.env.SENTRY_CODE, { sendTimeout: 5 }).install();
@@ -33,6 +34,10 @@ app.get('/v1/status', (req, res) => {
 
 app.use('/v1', routes);
 app.use('/p1', partnerRoutes);
+
+app.get('/test', (req, res) => {
+    razorPay.confirmPayment('pay_AQj0v9WmyddHSu', 5714);
+})
 
 // Error Reporting
 app.use(Raven.requestHandler());

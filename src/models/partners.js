@@ -71,6 +71,11 @@ const partnerSchema = new mongoose.Schema({
         opentime: { type: String, required: true },
         closetime: { type: String, required: true },
     },
+    taxInfo: {
+        cgst: { type: Number },
+        sgst: { type: Number },
+        servicetax: { type: Number }
+    },
     bankDetails: {
         accname: { type: String, required: true },
         number: { type: Number, required: true },
