@@ -54,6 +54,77 @@ const listNearyByPlaces = async(long, lat) => {
 
 };
 
+const partnerDetail = async(partnerID) => {
+    try {
+
+        const partner = await Partner.findOne({ partnerID: partnerID }, 'partnerID commission taxInfo').exec();
+
+        if (partner.id) {
+            logger.info("partnerDetail(): Partner found ", partner);
+            return JSON.parse(JSON.stringify(partner));
+        } else {
+            throw new Error(partner);
+        }
+
+    } catch(err) {
+        logger.info("partnerDetail(): Partner error ", err);
+        return "ERROR";
+    }
+}
+
+const getPartner = async(partnerID) => {
+
+    try {
+
+        const partner = await Partner.findOne({ partnerID: partnerID }, 'partnerID name phone imageid basic commission location characteristics tax taxInfo').exec();
+
+        if (partner) {
+            logger.info("getPartner(): Partner found ", partner);
+            return JSON.parse(JSON.stringify(partner));
+        } else {
+            throw new Error(partner);
+        }
+
+    } catch(err) {
+        logger.info("getPartner(): Partner error ", err);
+        return "ERROR";
+    }
+
+}
+
+const getMenu = async(partnerID) => {
+
+    try {
+
+        const items = await getPlaceMenu(partnerID);
+        const collection = await getCollection(partnerID);
+
+        // Menu not found
+        if (items === "ERROR" || collection === "ERROR") {
+            throw new Error('err');
+        }
+
+        // Converting the array of items to Object. 
+        let modItems = {};
+        items.forEach(item => {
+            modItems[item.id] = item;
+        });
+
+        logger.info('Returning Menu & Collections + ' + items + '\n' + collection);
+
+        return {
+            items: modItems,
+            collection: collection.menu
+        }
+
+    } catch(err) {
+
+        return "ERROR";
+
+    }
+
+}
+
 const getPlaceMenu = async(partnerID) => {
 
     const query = { partnerID: partnerID };
@@ -171,13 +242,14 @@ const filterType = async(list) => {
 
 const getPlaceDetails = ((req, res, next) => {});
 
-const getMenu = ((req, res, next) => {});
-
 module.exports = {
     listNearyByPlaces,
+    partnerDetail,
     filterCuisines,
     filterServices,
     filterType,
     getPlaceMenu,
-    getCollection
+    getCollection,
+    getPartner,
+    getMenu
 }

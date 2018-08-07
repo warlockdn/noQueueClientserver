@@ -1,10 +1,10 @@
 const logger = require('../utils/logger');
 const express = require('express');
 const cart = require('../helper/cart');
+const partner = require('../helper/partner');
 const firebase = require('../providers/firebase');
 const razorPay = require('../providers/razorPay/index');
-// const payTM = require('../paytm/checksum');
-// const payTMConfig = require('../paytm/paytm_config');
+const transaction = require('../controllers/transaction');
 
 const manageCart = async(req, res, next) => {
 
@@ -79,6 +79,7 @@ const verifyOrderPayment = async(req, res, next) => {
         const orderID = req.body.orderID;
         const paymentID = req.body.paymentID;
         const amount = req.body.amount;
+        const partnerID = req.body.partnerID;
 
         if (!orderID || !paymentID) {
             throw new Error('Empty parameter.');
@@ -86,16 +87,44 @@ const verifyOrderPayment = async(req, res, next) => {
 
         // Capture payment.
         const status = await razorPay.confirmPayment(paymentID, amount);
-        // const verifyAmount = await cart.checkPayment(orderID, )
 
         if (status.code === 500) {
             throw new Error(status.data);
-        }   
+        }
+
+        if (status.code === 200) {
+
+            let source = {
+                channel: "Razorpay",
+                orderID: status.data.order_id,
+                paymentID:  status.data.id
+            }
+
+            let partnerData = await partner.partnerDetail(partnerID);
+            let tax = 0;
+            
+            if (partnerData.taxInfo) {
+                Object.keys(partnerData.taxInfo).forEach((key) => {
+                    tax += partnerData.taxInfo[key];
+                })
+            }
+
+            const newTransaction = await transaction.createTransaction(partnerData.partnerID, req.body.customer.id, source, status.data.amount, tax, partnerData.commission);
+
+            if (newTransaction !== "ERROR") {
+
+                return res.status(200).json({
+                    status: status.code,
+                    message: "Payment captured and validated successfully"
+                })
+
+            } else {
+
+                throw new Error("Error creating transaction");
+
+            }
+        }
         
-        return res.status(200).json({
-            status: status.code,
-            message: "Payment captured and validated successfully"
-        })
         
     } catch(err) {
 

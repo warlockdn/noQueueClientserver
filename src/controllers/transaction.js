@@ -1,37 +1,41 @@
-const razor = require('../providers/razorPay/index');
+const logger = require('../utils/logger');
+const Transaction = require('../models/transaction');
 
-const cart = ((req, res, next) => {});
+const createTransaction = async(partnerID, customerID, source, amount, tax, commission) => {
 
-const createCart = ((req, res, next) => {});
-
-const updateCart = ((req, res, next) => {})
-
-const getRazorOrders = async(req, res, next) => {
-    
-    const orders = await razor.getAllOrders();
-    
     try {
-        if (orders) {
-    
-            console.log("Orders: ", orders)
-    
-            return res.status(200).json({
-                status: 200,
-                message: "Done",
-                orders: orders
-            })
-        }
-    } catch(e) {
 
-        return res.status(204).json({
-            status: 204,
-            message: 'No orders found'
-        })
-        
+        const payload = {
+            partnerID: partnerID,
+            partnerID: customerID,
+            source: source,
+            amount: amount,
+            tax: tax,
+            commission: commission
+        }
+
+        logger.info("createTransaction(): ", payload);
+
+        const transaction = new Transaction(payload);
+        const newTransaction = await transaction.save();
+
+        if (newTransaction.id) {
+            logger.info("createTransaction(): Transaction created ", newTransaction);
+            return {
+                id: newTransaction.id
+            }
+        } else {
+            throw new Error(newTransaction);
+        }
+
+    } catch(err) {
+
+        logger.info("createTransaction(): Error creating transaction ", err)
+        return "ERROR";
     }
 
 }
 
 module.exports = {
-    getRazorOrders
+    createTransaction
 }

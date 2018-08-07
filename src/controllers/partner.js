@@ -43,6 +43,43 @@ const listPlacesByLongLat = async(req, res, next) => {
 
 };
 
+const getPartnerDetail = async(req, res, next) => {
+
+    const partnerID = req.params.partnerID;
+
+    try {
+
+        logger.info("getPartnerDetail(): partnerID - ", partnerID);
+        
+        const partnerDetail = await partner.getPartner(partnerID);
+        const menu = await partner.getMenu(partnerID);
+
+        if (partnerDetail !== "ERROR" && menu !== "ERROR") {
+            return res.status(200).json({
+                status: 200,
+                message: "Partner details fetched successfully",
+                partner: {
+                    detail: partnerDetail,
+                    menu: menu
+                }
+            })
+        } else {
+            throw new Error("ERROR");
+        }
+
+    } catch(err) {
+
+        logger.info("getPartnerDetail() Error fetching partner details");
+        
+        res.status(200).json({
+            code: 500,
+            message: "Error fetching details"
+        })
+
+    }
+
+}
+
 const getPlaceMenu = async(req, res, next) => {
     const partnerID = parseInt(req.params.partnerID);
 
@@ -66,7 +103,7 @@ const getPlaceMenu = async(req, res, next) => {
             modItems[item.id] = item;
         });
 
-        logger.info(`Returning Menu & Collections \n${items} \n${collection}`);
+        logger.info('Returning Menu & Collections + ' + items + '\n' + collection);
 
         return res.status(200).json({
             status: 200,
@@ -86,5 +123,6 @@ const getPlaceMenu = async(req, res, next) => {
 
 module.exports = {
     listPlacesByLongLat,
-    getPlaceMenu
+    getPlaceMenu,
+    getPartnerDetail
 }

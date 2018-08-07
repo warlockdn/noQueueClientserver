@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { autoIncrement } = require('mongoose-plugin-autoinc')
 
 // Initialize Auto Increment 
-const connection = mongoose.createConnection("mongodb://localhost:27017/food");
+const connection = mongoose.createConnection(process.env.MONGO_CONNECT_URL);
 
 const customerSchema = new mongoose.Schema({
     customerID: { type: Number, unique: true, required: true },

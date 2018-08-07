@@ -10,4 +10,7 @@ router.use((req, res, next) => {
 router.route('/orders')
     .get(misc.getOrderList);
 
+router.route('/order:id')
+    .get(misc.getOrderbyID);
+
 module.exports = router;
