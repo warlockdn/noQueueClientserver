@@ -8,7 +8,7 @@ const email = require('../providers/email');
 const algorithm = 'aes256'; 
 const key = process.env.PASSWORD_KEY;
 
-const createCustomer = async(req, res, next) => {
+const createCustomer = async(req) => {
     
     const payload = {
         name: req.body.user.name,
@@ -37,7 +37,7 @@ const createCustomer = async(req, res, next) => {
 
 };
 
-const updateCustomer = ((req, res, next) => {
+const updateCustomer = ((req) => {
 
 });
 
@@ -59,7 +59,7 @@ const findCustomer = async(phone) => {
     
 };
 
-const authCustomer = async(req, res, next) => {
+const authCustomer = async(req) => {
 
     const query = { phone: parseInt(req.body.phone) };
     const password = req.body.password;
@@ -86,7 +86,29 @@ const authCustomer = async(req, res, next) => {
 
 }
 
-const authCustomerByOTP = async(req, res, next) => {
+const authCustomerByOTP = async(req) => {
+
+}
+
+const fetch = async(customerID) => {
+
+    try {
+
+        logger.info("fetch(): Fetching customer checkins ", customerID);
+
+        const customer = await Customer.findOne({ customerID: customerID, isCheckedIn: true }, 'checkIn').exec();
+
+        if (!customer) {
+            throw new Error("Customer isn't checked in.");
+        }
+
+        logger.info("Customer checked in at ", customer);
+
+        return JSON.parse(JSON.stringify(customer));
+
+    } catch(err) {
+        return "NOPE";
+    }
 
 }
 
@@ -95,5 +117,6 @@ module.exports = {
     createCustomer,
     updateCustomer,
     findCustomer,
-    authCustomer
+    authCustomer,
+    fetch
 }

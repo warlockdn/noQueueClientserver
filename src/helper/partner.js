@@ -20,7 +20,8 @@ const listNearyByPlaces = async(long, lat) => {
                 }
             },
             isActive: true,
-            isPending: false
+            isPending: false,
+            'characteristics.typeid': { $in: [1, 2] }
             // , 
         }, 'partnerID name phone imageid basic commission location characteristics tax taxInfo').exec();
 

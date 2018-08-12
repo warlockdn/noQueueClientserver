@@ -19,7 +19,13 @@ const customerSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    
+    isCheckedIn: { type: Boolean, default: false },
+    checkIn: {
+        name: { type: String },
+        partnerID: { type: Number },
+        room: { type: String },
+        checkInTime: { type: Date }
+    }
 });
 
 customerSchema.methods.validatePassword = (password, receivedPassword) => {

@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const Cart = require('../models/cartModel');
+const customer = require('../helper/customer');
 
 const getOrderList = async(req, res, next) => {
 
@@ -75,7 +76,41 @@ const getOrderbyID = async(req, res, next) => {
 
 }
 
+const fetchForCustomer = async(req, res, next) => {
+
+    logger.info("fetchForCustomer(): Fetching...");
+
+    const customerID = req.body.customer.id;
+
+    try {
+
+        const data = await customer.fetch(customerID);
+
+        if (data === "NOPE") {
+            throw new Error(data);
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "Data found",
+            details: data.checkIn
+        })
+
+    } catch(err) {
+
+        logger.info("fetchForCustomer(): result ", err);
+
+        return res.status(200).json({
+            status: 500,
+            message: "No detail exist"
+        })
+
+    }
+
+}
+
 module.exports = {
     getOrderList,
-    getOrderbyID
+    getOrderbyID,
+    fetchForCustomer
 }

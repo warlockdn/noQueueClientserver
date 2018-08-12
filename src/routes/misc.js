@@ -13,4 +13,7 @@ router.route('/orders')
 router.route('/order:id')
     .get(misc.getOrderbyID);
 
+router.route('/fetch')
+    .get(misc.fetchForCustomer);
+
 module.exports = router;
