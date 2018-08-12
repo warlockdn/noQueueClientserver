@@ -1,8 +1,10 @@
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const Cart = require('../models/cartModel');
+const customer = require('../helper/customer');
+const partner = require('../helper/partner');
 
-const manageCart = async(cartData, customerID, partnerID, notes, partnerName) => {
+const manageCart = async(cartData, customerID, partnerID, notes, partnerName, room) => {
 
     try {
 
@@ -14,6 +16,7 @@ const manageCart = async(cartData, customerID, partnerID, notes, partnerName) =>
             total: cartData.total,
             notes: notes,
             partnerName: partnerName,
+            room: room
         }
 
         if (cartData.tax) {
@@ -59,16 +62,52 @@ const manageCart = async(cartData, customerID, partnerID, notes, partnerName) =>
         payload.cart = cartItems;
     
         logger.info('Creating new Cart Item ', payload);
-        
-        const cart = new Cart(payload);
-        const newCart = await cart.save();
 
-        if (newCart.id) {
-            logger.info('New Cart Item added. ', newCart);
-            return newCart;
+        /* 
+            Check if a room exists and 
+            if exists then find out if its valid and 
+            found valid then check partner details if its a hotel or not
+            then send it to save.
+        */
+
+        if (payload.room) {
+
+            const customerFetch = await customer.fetch(payload.customerID);
+            const partnerDetail = await partner.getPartner(payload.partnerID);
+
+            if (customerFetch !== "NOPE" && partnerDetail.characteristics.typeid === "3") {
+
+                const cart = new Cart(payload);
+                const newCart = await cart.save();
+    
+            if (newCart.id) {
+                logger.info('New Cart Item added. ', newCart);
+                return newCart;
+            } else {
+                throw new Error(newCart);
+            }    
+
+            } else {
+                throw new Error("Partner is not a Hotel && Customer isn't checked in.");
+            }
+
         } else {
-            throw new Error(newCart);
+
+            // Since its a normal order.
+            delete payload.room;
+            
+            const cart = new Cart(payload);
+            const newCart = await cart.save();
+    
+            if (newCart.id) {
+                logger.info('New Cart Item added. ', newCart);
+                return newCart;
+            } else {
+                throw new Error(newCart);
+            }
+
         }
+        
     } catch(err) {
         logger.info("Error creating new Cart ", err);
         return "ERROR";

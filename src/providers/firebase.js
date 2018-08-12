@@ -8,7 +8,11 @@ fireAdmin.initializeApp({
     databaseURL: "https://resapp-1523718961807.firebaseio.com"
 })
 
-let db = fireAdmin.firestore()
+let db = fireAdmin.firestore();
+
+db.settings = {
+    timestampsInSnapshots: true
+}
 
 const createOrderFirebase = async(order) => {
 

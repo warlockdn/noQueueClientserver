@@ -14,6 +14,7 @@ const manageCart = async(req, res, next) => {
         const cartData = req.body.cart;
         const notes = req.body.notes || null;
         const partner = req.body.partner || null;
+        const room = req.body.room || null;
 
         if (!cartData.partnerID) {
             throw new Error('Partner ID missing');
@@ -23,7 +24,7 @@ const manageCart = async(req, res, next) => {
             throw new Error('Error finding Customer ID');
         }
     
-        const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner);
+        const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner, room);
 
         if (newCart === "ERROR" || newCart === "DUPLICATE") {
             throw new Error("ERROR")

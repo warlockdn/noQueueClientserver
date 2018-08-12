@@ -112,11 +112,18 @@ const fetch = async(customerID) => {
 
 }
 
+const getCustomerbyID = async(customerID) => {
+
+
+
+}
+
 
 module.exports = {
     createCustomer,
     updateCustomer,
     findCustomer,
     authCustomer,
-    fetch
+    fetch,
+    // getCustomerbyID
 }
