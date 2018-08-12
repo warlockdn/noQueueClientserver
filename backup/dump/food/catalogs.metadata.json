@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"food.catalogs"},{"v":2,"unique":true,"key":{"id":1},"name":"id_1","ns":"food.catalogs","background":true},{"v":2,"key":{"partnerID":1},"name":"partnerID_1","ns":"food.catalogs","background":true}],"uuid":"4e9e71f8362042d8b4c19e6216962391"}
