@@ -94,12 +94,19 @@ const partnerSchema = new mongoose.Schema({
         default: true
     },
     commission: { type: Number, default: 8 },
-    documents: []
+    documents: [],
+    rooms: []
 }, {
     toObject: {
         transform: function (doc, ret) {
             delete ret._id;
             delete ret.password;
+        }
+    }
+}, {
+    toJSON: {
+        transform: function(doc, ret) {
+            delete ret._id
         }
     }
 });

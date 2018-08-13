@@ -24,7 +24,8 @@ const customerSchema = new mongoose.Schema({
         name: { type: String },
         partnerID: { type: Number },
         room: { type: String },
-        checkInTime: { type: Date }
+        checkInTime: { type: Date, default: Date.now() },
+        checkOutTime: { type: Date }
     }
 });
 

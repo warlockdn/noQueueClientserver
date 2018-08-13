@@ -58,4 +58,21 @@ const welcomeCustomer = async(phoneNumber, name) => {
 
 }
 
-module.exports = { sendOTP, welcomeCustomer, verifyOTP }
+const welcomeCustomerByPartner = async(phoneNumber, name, password) => {
+    
+    let param = {
+        sender: process.env.SMS_SENDER_REG,
+        route: 4,
+        mobiles: '91' + phoneNumber,
+        country: 91,
+        authkey: process.env.SMS_AUTH_KEY,
+        message: `Glad to have you with us ${name}. Download Zeaztzy bit.ly/xyz. Your password is ${password}. \nTeam RezApp`
+    }   
+
+    request.get({uri: process.env.SMS_HOST, qs: param}, function(err, response, body) {
+        logger.info('Message sent successfully to ', phoneNumber);
+    })
+
+}
+
+module.exports = { sendOTP, welcomeCustomer, verifyOTP, welcomeCustomerByPartner }

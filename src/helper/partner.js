@@ -2,6 +2,7 @@ const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 const helper = require('../utils/helpers');
 const Partner = require('../models/partners');
+const Customer = require('../models/customer');
 const Catalog = require('../models/catalog');
 
 const listNearyByPlaces = async(long, lat) => {
@@ -243,6 +244,63 @@ const filterType = async(list) => {
 
 const getPlaceDetails = ((req, res, next) => {});
 
+const getRooms = async(partnerID) => {
+
+    try {
+
+        const rooms = await Partner.findOne({ partnerID: partnerID, isActive: true, isPending: false, "characteristics.typeid": "3" }, 'rooms').exec();
+        
+        if (!rooms) {
+            throw new Error("No rooms available.")
+        } 
+
+        return rooms;
+
+    } catch(err) {
+
+        return "ERROR";
+
+    }
+
+}
+
+const getBookings = async(partnerID) => {
+
+    try {
+
+        const bookings = await Customer.find({ "checkIn.partnerID": partnerID, isCheckedIn: true }, 'name customerID checkIn').exec();
+
+        if (!bookings) {
+            throw new Error(bookings);
+        } else {
+
+            let newBookings = [];
+            bookings.forEach((booking) => {
+                newBookings.push({
+                    name: booking.name,
+                    customerID: booking.customerID,
+                    partnerID: booking.checkIn.partnerID, 
+                    room: booking.checkIn.room,
+                    checkInTime: booking.checkIn.checkInTime,
+                    checkOutTime: booking.checkIn.checkOutTime
+                });
+            })
+
+            logger.info("getBookings(): Returning " + newBookings);
+
+            return newBookings;
+        }
+
+
+    } catch(err) {
+
+        logger.info("No results found ", err);
+        return "NOPE";
+
+    }
+
+}
+
 module.exports = {
     listNearyByPlaces,
     partnerDetail,
@@ -252,5 +310,7 @@ module.exports = {
     getPlaceMenu,
     getCollection,
     getPartner,
-    getMenu
+    getMenu,
+    getRooms,
+    getBookings
 }

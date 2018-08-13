@@ -12,7 +12,12 @@ const jwtMiddleware = (req, res, next) => {
     jwt.verify(token, public_cert, { audience: 'clientServer' }, function(err, decoded) {
         try {
             if (!err && decoded.iss === 'cserver') {
-                req.body.customer = decoded.customer;
+                if (decoded.customer) {
+                    req.body.customer = decoded.customer;
+                }
+                if (decoded.partner) {
+                    req.body.partner = decoded.partner;
+                }
                 next();
             } else {
                 throw 'err';
