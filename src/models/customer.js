@@ -26,7 +26,8 @@ const customerSchema = new mongoose.Schema({
         room: { type: String },
         checkInTime: { type: Date, default: Date.now() },
         checkOutTime: { type: Date }
-    }
+    },
+    usedCoupons: [ Number ]
 });
 
 customerSchema.methods.validatePassword = (password, receivedPassword) => {
