@@ -4,7 +4,7 @@ const Cart = require('../models/cartModel');
 const customer = require('../helper/customer');
 const partner = require('../helper/partner');
 
-const manageCart = async(cartData, customerID, partnerID, notes, partnerName, room) => {
+const manageCart = async(cartData, customerID, partnerID, notes, partnerName, room, couponData) => {
 
     try {
 
@@ -16,11 +16,15 @@ const manageCart = async(cartData, customerID, partnerID, notes, partnerName, ro
             total: cartData.total,
             notes: notes,
             partnerName: partnerName,
-            room: room
+            room: room,
         }
 
         if (cartData.tax) {
             payload.tax = cartData.tax;
+        }
+
+        if (couponData !== null) {
+            payload.coupon = couponData;
         }
     
         // Verify and modify cart totalItems, Price and Total.

@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const express = require('express');
 const cart = require('../helper/cart');
+const coupon = require('../controllers/coupon');
 const partner = require('../helper/partner');
 const firebase = require('../providers/firebase');
 const razorPay = require('../providers/razorPay/index');
@@ -15,6 +16,7 @@ const manageCart = async(req, res, next) => {
         const notes = req.body.notes || null;
         const partner = req.body.partner || null;
         const room = req.body.room || null;
+        const couponCode = req.body.couponCode || null;
 
         if (!cartData.partnerID) {
             throw new Error('Partner ID missing');
@@ -23,37 +25,96 @@ const manageCart = async(req, res, next) => {
         if (!customerID) {
             throw new Error('Error finding Customer ID');
         }
+
+        /* 
+            if there is no coupon code then keep it simple as before 
+        */
+        if (couponCode === null) {
+
+            const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner, room);
     
-        const newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner, room);
+            if (newCart === "ERROR" || newCart === "DUPLICATE") {
+                throw new Error("ERROR")
+            } else {
+                
+                const newOrder = await razorPay.createOrder(newCart.total, newCart.id, newCart);
+    
+                if (newOrder.code === 200) {
+    
+                    return res.status(200).json({
+                        status: 200,
+                        message: "Cart updated successfully",
+                        cart: newCart,
+                        orderID: newOrder.id
+                    })
+    
+                } else {
+    
+                    throw new Error(newOrder);
+    
+                }
+    
+            }
 
-        if (newCart === "ERROR" || newCart === "DUPLICATE") {
-            throw new Error("ERROR")
-        } else {
-            
-            const newOrder = await razorPay.createOrder(newCart.total, newCart.id, newCart);
+        } else { // If coupon code exists then need to consume coupon and proceed
 
-            if (newOrder.code === 200) {
+            const consumeCoupon = await coupon.consumeCoupon(couponCode, customerID, cartData.partnerID, cartData.total);
 
-                return res.status(200).json({
-                    status: 200,
-                    message: "Cart updated successfully",
-                    cart: newCart,
-                    orderID: newOrder.id
-                })
+            if (consumeCoupon.code === 200) {
+
+                const couponData = {
+                    couponID: consumeCoupon.couponID,
+                    couponCode: consumeCoupon.couponCode,
+                    amount: consumeCoupon.couponAmount
+                }
+
+                let newCart = await cart.manageCart(cartData, customerID, cartData.partnerID, notes, partner, room, couponData);
+        
+                if (newCart === "ERROR" || newCart === "DUPLICATE") {
+                    throw new Error("ERROR")
+                } else {
+                    
+                    let newTotal = newCart.total - consumeCoupon.couponAmount;
+                    newCart.total = newTotal;
+
+                    const newOrder = await razorPay.createOrder(newTotal, newCart.id, newCart);
+        
+                    if (newOrder.code === 200) {
+        
+                        return res.status(200).json({
+                            status: 200,
+                            message: "Cart updated successfully",
+                            cart: newCart,
+                            orderID: newOrder.id
+                        })
+        
+                    } else {
+        
+                        throw new Error(newOrder);
+        
+                    }
+        
+                }
 
             } else {
-
-                throw new Error(newOrder);
-
+                throw new Error({
+                    type: "coupon",
+                    message: consumeCoupon.message
+                })
             }
 
         }
-
-
         
     } catch (err) {
 
         logger.info(`Error creating Cart: ${err}`);
+
+        if (err.type) {
+            return res.status(200).json({
+                status: 500,
+                message: "Error consuming coupon. Remove and try again"
+            })
+        }
 
         if (err === "Partner ID missing" || err === "Error finding Customer ID") {
             return res.status(200).json({

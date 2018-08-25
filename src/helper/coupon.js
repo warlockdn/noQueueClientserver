@@ -54,7 +54,67 @@ const updateCouponUsageCustomer = async(customerID, couponID) => {
 
 }
 
+/**
+ * After every coupon use update coupon count.
+ * @argument couponID Coupon ID for the coupon
+ * @argument toDisable Does it need to disable the coupon as well
+*/
+const updateCouponCount = async(couponID, isEnabled) => {
+
+    try {
+
+        let updatedCoupon = await Coupon.findOneAndUpdate({ id: couponID }, {
+            $set: {
+                isActive: isEnabled
+            }, $inc: {
+                usedCount: 1
+            }
+        });
+    
+        if (!updatedCoupon) {
+            throw new Error(updatedCoupon);
+        }
+
+        logger.info(`Coupon count updated ${couponID}`)
+
+    } catch(err) {
+        logger.info(`Error updating Coupon Count for ${couponID}`);
+    }
+
+
+
+}
+
+/**
+ * Disable coupon due to exceeding total limit. Once disabled notify partner.
+ * @param couponID Coupon ID for the coupon.
+ * @returns nothing.
+*/
+const disableCoupon = async(couponID, couponCode) => {
+
+    try {
+
+        const couponStatus = await Coupon.updateOne({ id: couponID, discountCode: couponCode }, {
+            $set: {
+                isActive: false
+            }
+        }).exec();
+    
+        if (!couponStatus) {
+            throw new Error(couponStatus);
+        }
+
+        logger.info(`disableCoupon(): Coupon was disabled as number of uses were reached. - ${couponID} : ${couponCode}`);
+
+    } catch(err) {
+        logger.info(`disableCoupon(): Error disabling coupon - ${couponID} : ${couponCode}`);
+    }
+
+}
+
 module.exports = {
     checkLimitCustomer,
-    updateCouponUsageCustomer
+    updateCouponUsageCustomer,
+    disableCoupon,
+    updateCouponCount
 }
