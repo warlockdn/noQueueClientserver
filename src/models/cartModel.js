@@ -30,7 +30,12 @@ const cartSchema = new Schema({
     commission: { type: Number },
     notes: { type: String },
     status: { type: String }, // In Cart (default), Paid, Accepted, Delivered
-    room: { type: String }  
+    room: { type: String },
+    coupon: {
+        couponID: { type: Number },
+        couponCode: { type: String },
+        amount: { type: Number }
+    }
 }, {
     toObject: {
         transform: function (doc, ret) {
