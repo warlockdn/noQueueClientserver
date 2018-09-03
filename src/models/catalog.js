@@ -35,6 +35,7 @@ const catalogSchema = new Schema({
     hasAddons: { type: Boolean, default: false },
     isEnabled: { type: Boolean, default: false },
     addons: [ addonGroupSchema ],
+    inStock: { type: Boolean, default: true },
     createdOn: { type: Date, default: Date.now() },
     updatedOn: { type: Date, default: Date.now() }
 }, {

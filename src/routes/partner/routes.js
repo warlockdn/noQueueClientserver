@@ -4,6 +4,7 @@ const auth = require('./auth');
 // const partner = require('./partner');
 const order = require('../../controllers/partner/orders');
 const customer = require('../partner/customer');
+const catalog = require('../../controllers/partner/catalog');
 const hotel = require('../../controllers/partner/hotel');
 
 const jwt = require('../../middleware/jwt');
@@ -14,6 +15,10 @@ router.use('/customer', customer);
 router.use((req, res, next) => {
     jwt.jwtMiddleware(req, res, next);
 })
+
+router.route('/catalog')
+    .get(catalog.getItems)
+    .post(catalog.toggleStock)
 
 router.route('/orders')
     .post(order.updateOrderStatus);

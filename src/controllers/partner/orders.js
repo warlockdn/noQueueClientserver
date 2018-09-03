@@ -9,6 +9,8 @@ const updateOrderStatus = async(req, res, next) => {
     const status = req.body.status;
     const tokenID = req.body.tokenID; // Firebase Doc ID
 
+    logger.info(`updatedStatus(): Starting order updates ${orderID} - ${status} - ${tokenID}`);
+
     try {
 
         let order = await cart.fetchCart(orderID, status);
@@ -21,18 +23,24 @@ const updateOrderStatus = async(req, res, next) => {
 
             if (updatedStatus === "ERROR") {
                 throw new Error("ERROR");
+            } else {
+
+                logger.info("Updated order status " + updatedStatus);
+
+                return res.status(200).json({
+                    status: 200,
+                    orderID: orderID,
+                    message: "Status Updated successfully"
+                })
+
             }
-            return res.status(200).json({
-                status: 200,
-                orderID: orderID,
-                message: "Status Updated successfully"
-            })
+
 
         }
 
     } catch(err) {
 
-        logger.log("Error updating order");
+        logger.log("Error updating order" + err);
 
         return res.status(500).json({
             status: 500,

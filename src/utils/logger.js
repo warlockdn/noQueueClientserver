@@ -7,7 +7,7 @@ const logger = winston.createLogger({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
             // zippedArchive: true,
-            maxSize: '50m',
+            maxSize: '200m',
             maxFiles: '14d',
             prettyPrint: (object) => {
                 return JSON.stringify(object);
@@ -15,21 +15,21 @@ const logger = winston.createLogger({
             colorize: true,
             silent: false,
             timestamp: true,
-            json: false
+            json: true
         }),
         new winston.transports.Console({
             filename: 'logs/log-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
             // zippedArchive: true,
-            maxSize: '50m',
+            maxSize: '200m',
             maxFiles: '14d',
             prettyPrint: (object) => {
                 return JSON.stringify(object);
             },
             colorize: true,
             silent: false,
-            timestamp: false,
-            json: false
+            timestamp: true,
+            json: true
         })
     ]
 });

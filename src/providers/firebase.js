@@ -10,9 +10,13 @@ fireAdmin.initializeApp({
 
 let db = fireAdmin.firestore();
 
-db.settings = {
+db.settings({
     timestampsInSnapshots: true
-}
+})
+
+fireAdmin.firestore.setLogFunction(console.log);
+
+console.log(fireAdmin.firestore.Timestamp.now());
 
 const createOrderFirebase = async(order) => {
 
@@ -21,10 +25,12 @@ const createOrderFirebase = async(order) => {
     try {
 
         order = JSON.parse(JSON.stringify(order));
-        order.updatedOn = new Date();
-        order.createdOn = new Date();
+        order.updatedOn = fireAdmin.firestore.Timestamp.now();
+        order.createdOn = fireAdmin.firestore.Timestamp.now();
 
-        return new Promise((resolve, reject) => {
+        logger.info(`Inserting order to Firebase ${JSON.stringify(order)}`);
+
+        /* return new Promise((resolve, reject) => {
             ref.add(order).then((order) => {
                 logger.info(order);
                 resolve(order);
@@ -32,15 +38,17 @@ const createOrderFirebase = async(order) => {
                 logger.info(err);
                 reject(err);
             })
-        })
+        }) */
         
-        /* let newOrder = await ref.add(order);
+        let newOrder = await ref.add(order);
         
         if (!newOrder) {
             throw new Error(newOrder);
         } 
 
-        return newOrder; */
+        logger.info(`Updated order status ${newOrder}`);
+
+        return newOrder;
 
     } catch(err) {
 
@@ -103,28 +111,33 @@ const updateOrderStatusFirebase = async(docID, orderID, status) => {
         };
     }
 
-    updatedStatus.updatedOn = new Date();
+    updatedStatus.updatedOn = fireAdmin.firestore.Timestamp.now(); //new Date();
 
     try {
 
         let ref = db.collection("orders");
 
-        return new Promise((resolve, reject) => {
+        /* return new Promise((resolve, reject) => {
             ref.doc(docID).update(updatedStatus).then((status) => {
                 resolve(status)
             }).then((err) => {
                 reject(err)
                 throw new Error(err);
             })
-        })
+        }) */
+
+        logger.info("updateOrderStatusFirebase(): Setting order status in firebase for " + docID + " " + JSON.stringify(updatedStatus));
         
-        /* let status = await ref.doc(docID).update(updatedStatus);
+        let status = await ref.doc(docID).update(updatedStatus);
 
         logger.info(status);
 
-        return status; */
+        return status;
 
     } catch(err) {
+
+        logger.info(`updateOrderStatusFirebase() Error updating order status ${orderID} - ${docID} -> ${err}`);
+
         return "ERROR";
     }
 

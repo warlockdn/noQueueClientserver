@@ -127,6 +127,8 @@ const fetchCart = async(orderID, status) => {
             throw new Error("Matching status not found");
         } */
 
+        logger.info(`fetchCart(): Updating order status for ${orderID} - ${status}`);
+
         const order = await Cart.findOneAndUpdate({ id: orderID }, { $set: {
             status: status
         } }).exec();
@@ -141,7 +143,7 @@ const fetchCart = async(orderID, status) => {
 
     } catch(err) {
 
-        logger.info(err);
+        logger.info(`Error updating order status ${err}`);
         return "ERROR";
 
     }
@@ -153,6 +155,16 @@ const checkPayment = async(orderID, amount) => {
     try {
 
         
+
+    } catch(err) {
+
+    }
+
+}
+
+const updateOrderStatus = async(orderID, status) => {
+
+    try {
 
     } catch(err) {
 

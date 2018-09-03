@@ -252,7 +252,6 @@ const notifyCartStatus = async(req, res, next) => {
 
     }
 
-
 }
 
 module.exports = {

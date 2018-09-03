@@ -24,7 +24,7 @@ const listNearyByPlaces = async(long, lat) => {
             isPending: false,
             'characteristics.typeid': { $in: [1, 2] }
             // , 
-        }, 'partnerID name phone imageid basic commission location characteristics tax taxInfo').exec();
+        }, 'partnerID name phone imageid partnerbg basic commission location characteristics tax taxInfo').exec();
 
         /* const results = await Partner.aggregate.near({
             near: coordinates,

@@ -8,11 +8,12 @@ const authenticate = async(req, res, next) => {
 
     const username = req.body.username;
     const password = req.body.password;
-    const type = "partner";
 
     try {
 
-        let partner = await Partner.findOne({ partnerID: username }, ).exec();
+        logger.info(`authenticate(): Authenticating ${username} - ${password}`);
+
+        let partner = await Partner.findOne({ partnerID: username }).exec();
     
         if (!partner) {
             throw new Error("Not found");
@@ -22,6 +23,8 @@ const authenticate = async(req, res, next) => {
             throw new Error("Incorrect Credentials");
         } else {
             
+            logger.info(`authenticate(): Successfully authenticated ${username} - ${JSON.stringify(partner)}`);
+
             const payload = {
                 partner: {
                     id: partner.partnerID,
@@ -42,7 +45,8 @@ const authenticate = async(req, res, next) => {
                             id: partner.partnerID,
                             name: partner.name,
                             email: partner.email,
-                            phone: partner.phone
+                            phone: partner.phone,
+                            type: partner.characteristics.type
                         }
                     })
                 }
