@@ -93,6 +93,7 @@ const partnerSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    isOpen: { type: Boolean, default: false },
     commission: { type: Number, default: 8 },
     documents: [],
     rooms: []

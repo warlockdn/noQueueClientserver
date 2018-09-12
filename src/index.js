@@ -24,6 +24,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
+app.use((req, res, next) => {
+    console.log(res.json);
+    next();
+})
+
 app.get('/v1/status', (req, res) => {
     res.json({
         statusCode: 200,
@@ -34,10 +39,6 @@ app.get('/v1/status', (req, res) => {
 
 app.use('/v1', routes);
 app.use('/p1', partnerRoutes);
-
-app.get('/test', (req, res) => {
-    razorPay.confirmPayment('pay_AQj0v9WmyddHSu', 5714);
-})
 
 // Error Reporting
 app.use(Raven.requestHandler());

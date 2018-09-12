@@ -41,18 +41,22 @@ const createOrderFirebase = async(order) => {
         }) */
         
         let newOrder = await ref.add(order);
+
+        /* const orderID = (order.id).toString();
+
+        let newOrder = await db.collection("orders").doc(orderID).set(order); */
         
         if (!newOrder) {
             throw new Error(newOrder);
         } 
 
-        logger.info(`Updated order status ${newOrder}`);
+        logger.info("Updated order status" + newOrder);
 
         return newOrder;
 
     } catch(err) {
 
-        logger.log("Error creating order", err);
+        logger.info("Error creating order" + err);
         return "ERR";
 
     }

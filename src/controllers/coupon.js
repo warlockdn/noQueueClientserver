@@ -126,6 +126,8 @@ const validateCoupon = async(req, res, next) => {
 
 const consumeCoupon = async(couponCode, customerID, partnerID, cartTotal) => {
 
+    let customerCheck = null;
+
     try {
         
         let coupon = await Coupon.findOne({ discountCode: couponCode, isActive: true, 'validity.startTime': { $lte: new Date() }, 'validity.endTime': { $gte: new Date() } }).where('discountFrom.partnerID').in([partnerID, null]).exec();
@@ -172,8 +174,6 @@ const consumeCoupon = async(couponCode, customerID, partnerID, cartTotal) => {
                 
                 // Is it limited to one.
                 if (coupon.usageLimits.islimitOne) {
-    
-                    // let customerCheck = await couponHelper.checkLimitCustomer(customerID, coupon.id)
     
                     if (!customerCheck) {
                         return {
@@ -241,15 +241,21 @@ const consumeCoupon = async(couponCode, customerID, partnerID, cartTotal) => {
                 }
             }
 
+        } else {
+
+            throw new Error(customerCheck);
+
         }
     
 
     } catch(err) {
 
-        return res.status(500).json({
-            status: 500,
-            message: "No coupons found"
-        })
+        logger.info("consumeCoupon(): Error consuming coupon ", err.stack);
+
+        return {
+            code: 500,
+            message: "Technical error occured"
+        }
 
     }
 

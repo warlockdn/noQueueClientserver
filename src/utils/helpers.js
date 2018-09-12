@@ -7,7 +7,15 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
             c(lat1 * p) * c(lat2 * p) * 
             (1 - c((lon2 - lon1) * p))/2;
 
-    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    let result = 12742 * Math.asin(Math.sqrt(a));
+
+    if (result < 1) {
+        return `${parseFloat(result).toFixed(2)} mtrs`
+    } else {
+        return `${parseFloat(result).toFixed(2)} kms`
+    }
+
+    // return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 
 }
 

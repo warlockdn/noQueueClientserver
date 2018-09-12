@@ -107,7 +107,7 @@ const manageCart = async(req, res, next) => {
         
     } catch (err) {
 
-        logger.info(`Error creating Cart: ${err}`);
+        logger.info("Error creating Cart: " + err.stack);
 
         if (err.type) {
             return res.status(200).json({
