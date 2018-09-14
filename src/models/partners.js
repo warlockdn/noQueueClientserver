@@ -51,9 +51,10 @@ const partnerSchema = new mongoose.Schema({
     },
     menu: [ collectionSchema ],
     location: {
+        type: { type: String, default: "Point" },
         coordinates: {
             type: [Number],
-            index: '2d',
+            // index: '2d',
             required: true
         },
         elevation: Number
@@ -70,6 +71,7 @@ const partnerSchema = new mongoose.Schema({
         weektiming: [String],
         opentime: { type: String, required: true },
         closetime: { type: String, required: true },
+        takeout: { type: Boolean, default: false }
     },
     taxInfo: {
         cgst: { type: Number },

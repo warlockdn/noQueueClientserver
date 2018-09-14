@@ -23,20 +23,7 @@ const listNearyByPlaces = async(long, lat) => {
             isActive: true,
             isPending: false,
             'characteristics.typeid': { $in: [1, 2] }
-            // , 
-        // }, 'partnerID name phone location').exec();
         }, 'partnerID name phone imageid partnerbg basic commission location characteristics tax taxInfo isOpen').exec();
-
-        /* const results = await Partner.aggregate.near({
-            near: coordinates,
-            distanceField: 'dist.calculated',
-            maxDistance: 500,
-            query: {
-                isActive: true,
-                isPending: false
-            },
-
-        }) */
 
         if (results !== null) {
 
