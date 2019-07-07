@@ -1,6 +1,7 @@
 {
   "name": "clientserver",
   "version": "1.0.0",
+  "keywords": ["nodejs", "expressjs", "mongodb", "mongoose", "firebase"],
   "description": "",
   "main": "index.js",
   "scripts": {
