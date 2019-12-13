@@ -34,6 +34,6 @@
     "babel-preset-env": "1.6.1",
     "install": "0.11.0",
     "nodemon": "1.17.3",
-    "npm": "6.0.0"
+    "npm": "6.13.4"
   }
 }
